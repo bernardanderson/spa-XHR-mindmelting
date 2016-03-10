@@ -5,14 +5,6 @@ var Predator = (function() {
 
   return {
 
-    parseHerbivores: function() {
-      privateHerbivores = JSON.parse(this.responseText);
-    },
-
-    parseCarnivores: function() {
-      privateCarnivores = JSON.parse(this.responseText);
-    },
-
     anXHRError: function(xhrFailureEvent) {
       console.log("An error occured while transferring the data");
     },
@@ -27,17 +19,27 @@ var Predator = (function() {
       return privateCarnivores;
     },
 
-    requestHerbivores: function(whichParsing) {
+    requestHerbivores: function(whichCallback) {
       var xmlHerbivores = new XMLHttpRequest();
-      xmlHerbivores.addEventListener("load", Predator[whichParsing]);
+      
+      xmlHerbivores.addEventListener("load", function() {
+        privateHerbivores = JSON.parse(this.responseText);
+        whichCallback(privateHerbivores);
+      });
+
       xmlHerbivores.addEventListener("error", Predator.anXHRError);
       xmlHerbivores.open("GET", "herbivores.json");
       xmlHerbivores.send();
     },
 
-    requestCarnivores: function(whichParsing) {
+    requestCarnivores: function(whichCallback) {
       var xmlCarnivores = new XMLHttpRequest();
-      xmlCarnivores.addEventListener("load", Predator[whichParsing]);
+
+      xmlCarnivores.addEventListener("load", function() {
+        privateCarnivores = JSON.parse(this.responseText);
+        whichCallback(privateCarnivores);
+      });
+
       xmlCarnivores.addEventListener("error", Predator.anXHRError);
       xmlCarnivores.open("GET", "carnivores.json");
       xmlCarnivores.send();
